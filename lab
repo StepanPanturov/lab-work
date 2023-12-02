@@ -1,0 +1,89 @@
+import time
+
+
+def diag_search(matrix, target, n, m):
+    i, j = 0, m - 1
+    while (i < n and j >= 0):
+        if (matrix[i][j] == target):
+            return True
+        elif (matrix[i][j] < target):
+            i += 1
+        else:
+            j -= 1
+    return False
+
+
+def binary_search(matrix, target, n, m):
+    for j in range(m):
+        left, right = 0, n - 1
+        while left <= right:
+            mid = (left + right) // 2
+            if matrix[mid][j] == target:
+                return True
+            elif matrix[mid][j] < target:
+                left = mid + 1
+            else:
+                right = mid - 1
+    return False
+
+
+def diag_exp_search(matrix, target, n, m):
+    i, j = 0, m - 1
+    while (i < n and j >= 0):
+        if (matrix[i][j] == target):
+            return True
+        elif (matrix[i][j] < target):
+            i = exp_search(matrix, target, n, i, j)
+        else:
+            j -= 1
+    return False
+
+
+def exp_search(matrix, target, n, i, j):
+    step = 1
+    while (i + step < n and matrix[i + step][j] < target):
+        step *= 2
+    left, right = i + step // 2 + 1, min(n - 1, i + step)
+    while (left <= right):
+        mid = (left + right) // 2
+        if matrix[mid][j] == target:
+            return mid
+        elif matrix[mid][j] < target:
+            left = mid + 1
+        else:
+            right = mid - 1
+    return left
+
+
+n = 2**13
+target = 2 * n + 1
+for k in range(1, 14):
+    m = pow(2, k)
+    matrix = []
+    print(m)
+    for i in range(n):
+        a = []
+        for j in range(m):
+            a.append(int(n / m * i + j) * 2)
+        matrix.append(a)
+    t0 = time.perf_counter()
+    print(diag_exp_search(matrix, target, n, m))
+    t1 = time.perf_counter()
+    print((t1 - t0) * 1000)
+
+
+# n = 2**13
+# target = 16 * n + 1
+# for k in range(1, 14):
+#     m = pow(2, k)
+#     matrix = []
+#     print(m)
+#     for i in range(n):
+#         a = []
+#         for j in range(m):
+#             a.append(int(n / m * i * j) * 2)
+#         matrix.append(a)
+#     t0 = time.perf_counter()
+#     print(diag_exp_search(matrix, target, n, m))
+#     t1 = time.perf_counter()
+#     print((t1 - t0) * 1000)
